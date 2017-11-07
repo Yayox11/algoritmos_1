@@ -178,13 +178,16 @@ void rb_tree_insert(rb_tree_t* t, rb_node_t* x) {
   while (x->parent->color == RED) {
     printf("parent still RED\n");
     if (x->parent == x->parent->parent->left) {
+      printf("A\n");
       y = x->parent->parent->right;
-      if (y->color == RED) {
+      if (y && y->color == RED) {
+        printf("AA\n");
 	x->parent->color = BLACK;
 	y->color = BLACK;
 	x->parent->parent->color = RED;
 	x = x->parent->parent;
       } else {
+        printf("AB\n");
 	if (x == x->parent->right) {
 	  x = x->parent;
 	  rb_tree_left_rotate(t, x);
@@ -194,13 +197,17 @@ void rb_tree_insert(rb_tree_t* t, rb_node_t* x) {
 	rb_tree_right_rotate(t, x->parent->parent);
       } 
     } else {
+      printf("B\n");
       y = x->parent->parent->left;
-      if (y->color == RED) {
+      printf("adhjsahdkh\n");
+      if (y && y->color == RED) {
+        printf("BA\n");
 	x->parent->color = BLACK;
 	y->color = BLACK;
 	x->parent->parent->color = RED;
 	x = x->parent->parent;
       } else {
+        printf("BB\n");
 	if (x == x->parent->left) {
 	  x = x->parent;
 	  rb_tree_right_rotate(t, x);
