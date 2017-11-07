@@ -15,7 +15,7 @@ rb_tree_iter_t* rb_tree_iter_make(rb_tree_t* t) {
 
   it->next = t->root;
 
-  while (it->next->left != t->nil) {
+  while (it->next->left != NULL) {
     it->next = it->next->left;
   }
 
@@ -30,9 +30,9 @@ rb_node_t* rb_tree_iter_next(rb_tree_iter_t* it) {
   rb_node_t* r = it->next;
   rb_node_t* curr = it->next;
 
-  if (curr->right != it->tree->nil) {
+  if (curr->right != NULL) {
     curr = curr->right;
-    while (curr->left != it->tree->nil && curr != curr->left) {
+    while (curr->left != NULL) {
       printf("AAA\n");
       curr = curr->left;
     }
@@ -42,7 +42,7 @@ rb_node_t* rb_tree_iter_next(rb_tree_iter_t* it) {
 
   while (1) {
     printf("BBB\n");
-    if (curr->parent == it->tree->root || curr == curr->parent) {
+    if (curr->parent == it->tree->root) {
       printf("ROOT\n");
       it->next = NULL;
       return r;
@@ -63,21 +63,12 @@ rb_tree_t* rb_tree_make(void) {
     exit(EXIT_FAILURE);
   }
 
-  new->nil = malloc(sizeof(rb_node_t));
-  if (new->nil == NULL) {
-    perror("fatal: out of memory\n");
-    exit(EXIT_FAILURE);
-  }
-  new->nil->parent = new->nil->left = new->nil->right = new->nil;
-  new->nil->color = BLACK;
-  new->nil->key = -1;
-
   new->root = malloc(sizeof(rb_node_t));
   if (new->root == NULL) {
     perror("fatal: out of memory\n");
     exit(EXIT_FAILURE);
   }
-  new->root->parent = new->root->left = new->root->right = new->nil;
+  new->root->parent = new->root->left = new->root->right = NULL;
   new->root->color = BLACK;
   new->root->key = -1;
 
@@ -103,7 +94,7 @@ void rb_tree_left_rotate(rb_tree_t* t, rb_node_t* x) {
   rb_node_t* y = x->right;
   x->right = y->left;
 
-  if (y->left != t->nil) {
+  if (y->left != NULL) {
     y->left->parent = x;
   }
 
@@ -123,7 +114,7 @@ void rb_tree_right_rotate(rb_tree_t* t, rb_node_t* y) {
   rb_node_t* x = y->left;
   y->left = x->right;
 
-  if (t->nil != x->right) {
+  if (NULL != x->right) {
     x->right->parent = y;
   }
 
@@ -140,11 +131,11 @@ void rb_tree_right_rotate(rb_tree_t* t, rb_node_t* y) {
 }
 
 int rb_tree_insert_helper(rb_tree_t* t, rb_node_t* z) {
-  z->left = z->right = t->nil;
+  z->left = z->right = NULL;
   rb_node_t* y = t->root;
   rb_node_t* x = t->root->left;
 
-  while (x != t->nil) {
+  while (x != NULL) {
     y = x;
     if (x->key > z->key) {
       x = x->left;
@@ -171,16 +162,21 @@ int rb_tree_insert_helper(rb_tree_t* t, rb_node_t* z) {
 }
 
 void rb_tree_insert(rb_tree_t* t, rb_node_t* x) {
+  printf("Insertando persona %d\n", x->key+1);
   int result = rb_tree_insert_helper(t, x);
   if (result != 0) {
+    printf("Persona %d ya está en el árbol\n", x->key+1);
     return;
   }
+
+  printf("Persona %d insertada. Fixup\n", x->key+1);
 
   x->color = RED;
 
   rb_node_t* y;
 
   while (x->parent->color == RED) {
+    printf("parent still RED\n");
     if (x->parent == x->parent->parent->left) {
       y = x->parent->parent->right;
       if (y->color == RED) {
@@ -216,36 +212,13 @@ void rb_tree_insert(rb_tree_t* t, rb_node_t* x) {
     }
   }
 
+  printf("Fixedup\n");
+
   t->root->left->color = BLACK;
 }
 
-rb_node_t* rb_tree_min(rb_tree_t* t) {
-  rb_node_t* n = t->root->left;
-  while (n->left != t->nil) n = n->left;
-  return n;
-}
-
-rb_node_t* rb_tree_max(rb_tree_t* t) {
-  rb_node_t* n = t->root->left;
-  while (n->right != t->nil) n = n->right;
-  return n;
-}
-
-unsigned int rb_tree_black_height(rb_tree_t* t) {
-  unsigned int bh = 0;
-
-  rb_node_t* n = t->root->left;
-
-  while (n != t->nil) {
-    if (n->color == BLACK) ++bh;
-    n = n->left;
-  }
-
-  return bh;
-}
-
 void rb_tree_print_helper(rb_tree_t* t, rb_node_t* n) {
-  if (n == t->nil) {
+  if (n == NULL) {
     return;
   }
   rb_tree_print_helper(t, n->left);
@@ -257,30 +230,25 @@ void rb_tree_print(rb_tree_t* t) {
   rb_tree_print_helper(t, t->root->left);
 }
 
-void rb_tree_merge_helper(rb_tree_t* t, rb_tree_t* t2, rb_node_t* n) {
-  rb_tree_insert(t, n);
-  if (n->left != t2->nil) rb_tree_merge_helper(t, t2, n->left);
-  if (n->right != t2->nil) rb_tree_merge_helper(t, t2, n->right);
-}
-
 void rb_tree_merge(rb_tree_t* t1, rb_tree_t* t2) {
   rb_tree_iter_t* it = rb_tree_iter_make(t2);
+
   rb_node_t* c;
   while ((c = rb_tree_iter_next(it))) {
     if (c->key == -1) {
       break;
     }
     printf("C: key=%d\n", c->key+1);
-    printf("Insertando persona %d\n", c->key+1);
     rb_tree_insert(t1, c);
     printf("FINAL\n");
   }
+
   printf("fuera del puto while\n");
   free(it);
 }
 
 void rb_tree_free_helper(rb_tree_t* t, rb_node_t* x) {
-  if (x != t->nil) {
+  if (x != NULL) {
     rb_tree_free_helper(t, x->left);
     rb_tree_free_helper(t, x->right);
     free(x);
@@ -291,7 +259,6 @@ void rb_tree_free(rb_tree_t* t) {
   if (t) {
     rb_tree_free_helper(t, t->root->left);
     free(t->root);
-    free(t->nil);
     free(t);
     t = NULL;
   }

@@ -27,7 +27,6 @@ typedef struct rb_tree_s rb_tree_t;
 struct rb_tree_s {
   int size;
   rb_node_t* root;
-  rb_node_t* nil;
 };
 
 typedef struct rb_tree_iter_s rb_tree_iter_t;
@@ -41,7 +40,7 @@ struct rb_tree_iter_s {
 
 rb_tree_iter_t* rb_tree_iter_make(rb_tree_t* t);
 
-rb_node_t* rb_tree_iter_next(rb_tree_iter_t* it);
+rb_node_t*      rb_tree_iter_next(rb_tree_iter_t* it);
 
 // API
 
