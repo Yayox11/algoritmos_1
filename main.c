@@ -8,7 +8,7 @@
 #define STACK_SIZE 128
 
 int collapse_relationships(rb_tree_t** rels, int target) {
-  if (!rels[target]) return 0;
+  if (!rels[target] || rels[target]->size == 1) return 0;
 
   rb_tree_t* t = rels[target];
   rb_tree_t* tmp = rb_tree_make();
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
     rb_tree_t* t = rb_tree_make();
     rb_tree_insert(t, rb_node_make(i, phobias[i]));
     rels[i] = t;
-    k++;
+    ++k;
   }
 
   for (i = 0; i < n; i++) {

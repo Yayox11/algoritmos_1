@@ -77,6 +77,8 @@ rb_tree_t* rb_tree_make(void) {
   n->root->color = BLACK;
   n->root->key = -1;
 
+  n->size = 0;
+
   return n;
 }
 
@@ -165,8 +167,6 @@ int rb_tree_insert_helper(rb_tree_t* t, rb_node_t* z) {
     y->right = z;
   }
 
-  t->phobias[z->info - 1] += 1;
-
   return duplicate;
 }
 
@@ -177,6 +177,9 @@ void rb_tree_insert(rb_tree_t* t, rb_node_t* x) {
     x = NULL;
     return;
   }
+  
+  t->size += 1;
+  t->phobias[x->info - 1] += 1;
 
   rb_node_t* y;
   rb_node_t* z = x;
