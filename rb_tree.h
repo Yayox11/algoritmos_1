@@ -26,7 +26,9 @@ typedef struct rb_tree_s rb_tree_t;
 
 struct rb_tree_s {
   int size;
+  int mcp; // most common phobia
   rb_node_t* root;
+  rb_node_t* nil;
 };
 
 typedef struct rb_tree_iter_s rb_tree_iter_t;
@@ -38,9 +40,11 @@ struct rb_tree_iter_s {
 
 // iter API
 
-rb_tree_iter_t* rb_tree_iter_make(rb_tree_t* t);
+rb_tree_iter_t* rb_tree_iter_make(rb_tree_t*);
 
-rb_node_t*      rb_tree_iter_next(rb_tree_iter_t* it);
+int             rb_tree_iter_has_next(rb_tree_iter_t*);
+
+rb_node_t*      rb_tree_iter_next(rb_tree_iter_t*);
 
 // API
 
@@ -50,11 +54,7 @@ rb_node_t* rb_node_make(int key, int info);
 
 void       rb_tree_merge(rb_tree_t* t1, rb_tree_t* t2);
 
-rb_node_t* rb_tree_min(rb_tree_t* t);
-
-rb_node_t* rb_tree_max(rb_tree_t* t);
-
-rb_node_t* rb_tree_next(rb_tree_t* t);
+int        rb_tree_has(rb_tree_t* t, int k);
 
 void       rb_tree_insert(rb_tree_t* t, rb_node_t* z);
 
