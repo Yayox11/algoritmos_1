@@ -53,10 +53,21 @@ int main(int argc, char** argv) {
 
   fscanf(stdin, "%d", &n);
 
-  int phobias[n];
+  int* phobias = malloc(sizeof(int) * n);
+  if (phobias == NULL) {
+    perror("fatal: out of memory\n");
+    exit(EXIT_FAILURE);
+  }
 
-  rb_tree_t* rels[n];
-  for (i = 0; i < n; i++) rels[i] = NULL;
+  rb_tree_t** rels = malloc(sizeof(rb_tree_t*) * n);
+  if (rels == NULL) {
+    perror("fatal: out of memory\n");
+    exit(EXIT_FAILURE);
+  }
+
+  for (i = 0; i < n; i++) {
+    rels[i] = NULL;
+  }
 
   // fill phobias array
   for (i = 0; i < n; i++) {
@@ -115,12 +126,11 @@ int main(int argc, char** argv) {
       }
       printf("%d\n", mcp+1);
     }
-    /*
-    printf("=============\n");
-    rb_tree_print(rels[i]);
-    printf("=============\n");
-    */
+    rb_tree_free(rels[i]);
   }
+
+  free(phobias);
+  free(rels);
 
   exit(EXIT_SUCCESS);
 }
