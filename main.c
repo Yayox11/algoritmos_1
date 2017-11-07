@@ -100,21 +100,26 @@ int main(int argc, char** argv) {
 
   for (i = 0; i < n; i++) {
     if (rels[i] == NULL) continue;
-    /*
-    int mcp = 0;
-    int mcpc = 0;
-    int j;
-    for (j = 0; j < MAX_PHOBIAS; j++) {
-      if (rels[i]->phobias[j] > mcpc) {
-        mcp = j;
-        mcpc = rels[i]->phobias[j];
+    if (rels[i]->size == 1) {
+      int idx = rels[i]->root->left->key;
+      printf("%d\n", phobias[idx]);
+    } else {
+      int mcp = 0;
+      int mcpc = 0;
+      int j;
+      for (j = 0; j < MAX_PHOBIAS; j++) {
+        if (rels[i]->phobias[j] > mcpc) {
+          mcp = j;
+          mcpc = rels[i]->phobias[j];
+        }
       }
+      printf("%d\n", mcp+1);
     }
-    printf("%d\n", mcp);
-    */
+    /*
     printf("=============\n");
     rb_tree_print(rels[i]);
     printf("=============\n");
+    */
   }
 
   exit(EXIT_SUCCESS);
