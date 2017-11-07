@@ -7,8 +7,8 @@
 
 #define STACK_SIZE 128
 
-void collapse_relationships(rb_tree_t** rels, int target) {
-  if (!rels[target]) return;
+int collapse_relationships(rb_tree_t** rels, int target) {
+  if (!rels[target]) return 0;
 
   rb_tree_t* t = rels[target];
   rb_tree_t* tmp = rb_tree_make();
@@ -44,6 +44,8 @@ void collapse_relationships(rb_tree_t** rels, int target) {
 
   rb_tree_free(tmp);
   stack_free(s);
+
+  return 1;
 }
 
 int main(int argc, char** argv) {
@@ -58,9 +60,9 @@ int main(int argc, char** argv) {
 
   // fill phobias array
   for (i = 0; i < n; i++) {
-    int f;
-    fscanf(stdin, "%d", &f);
-    phobias[i] = f;
+    int p;
+    fscanf(stdin, "%d", &p);
+    phobias[i] = p;
   }
 
   fscanf(stdin, "%d", &m);
@@ -81,15 +83,38 @@ int main(int argc, char** argv) {
     rb_tree_insert(rels[p2], rb_node_make(p1, phobias[p1]));
   }
 
+  int k = 0;
   for (i = 0; i < n; i++) {
-    collapse_relationships(rels, i);
+    if (rels[i]) continue;
+    rb_tree_t* t = rb_tree_make();
+    rb_tree_insert(t, rb_node_make(i, phobias[i]));
+    rels[i] = t;
+    k++;
   }
 
-  int k = 1;
+  for (i = 0; i < n; i++) {
+    k += collapse_relationships(rels, i);
+  }
+
+  printf("%d\n", k);
+
   for (i = 0; i < n; i++) {
     if (rels[i] == NULL) continue;
-    printf("Comunidad %d\n", k++);
+    /*
+    int mcp = 0;
+    int mcpc = 0;
+    int j;
+    for (j = 0; j < MAX_PHOBIAS; j++) {
+      if (rels[i]->phobias[j] > mcpc) {
+        mcp = j;
+        mcpc = rels[i]->phobias[j];
+      }
+    }
+    printf("%d\n", mcp);
+    */
+    printf("=============\n");
     rb_tree_print(rels[i]);
+    printf("=============\n");
   }
 
   exit(EXIT_SUCCESS);

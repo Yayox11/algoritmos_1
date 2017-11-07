@@ -4,6 +4,8 @@
 
 #define RB_TREE_H_
 
+#define MAX_PHOBIAS 10000
+
 typedef enum rb_color_e rb_color_t;
 
 enum rb_color_e {
@@ -26,9 +28,9 @@ typedef struct rb_tree_s rb_tree_t;
 
 struct rb_tree_s {
   int size;
-  int mcp; // most common phobia
   rb_node_t* root;
   rb_node_t* nil;
+  unsigned int phobias[MAX_PHOBIAS];
 };
 
 typedef struct rb_tree_iter_s rb_tree_iter_t;

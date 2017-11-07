@@ -165,6 +165,8 @@ int rb_tree_insert_helper(rb_tree_t* t, rb_node_t* z) {
     y->right = z;
   }
 
+  t->phobias[z->info - 1] += 1;
+
   return duplicate;
 }
 
